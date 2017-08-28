@@ -230,9 +230,9 @@ func New(c *config.RuntimeConfig) (*Agent, error) {
 	return a, nil
 }
 
-func LocalConfig(cfg *Config) local.Config {
+func LocalConfig(cfg *config.RuntimeConfig) local.Config {
 	lc := local.Config{
-		AdvertiseAddr:       cfg.AdvertiseAddr,
+		AdvertiseAddr:       cfg.AdvertiseAddrLAN.String(),
 		CheckUpdateInterval: cfg.CheckUpdateInterval,
 		Datacenter:          cfg.Datacenter,
 		NodeID:              cfg.NodeID,
