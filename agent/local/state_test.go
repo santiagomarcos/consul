@@ -1266,8 +1266,9 @@ func TestAgent_ServiceTokens(t *testing.T) {
 
 	tokens := new(token.Store)
 	tokens.UpdateUserToken("default")
-	lcfg := agent.LocalConfig(config.DefaultRuntimeConfig(`bind_addr = "127.0.0.1" data_dir = "dummy"`))
-	l := local.NewState(lcfg, nil, tokens, make(chan struct{}, 1))
+	cfg := config.DefaultRuntimeConfig(`bind_addr = "127.0.0.1" data_dir = "dummy"`)
+	l := local.NewState(agent.LocalConfig(cfg), nil, tokens)
+	l.TriggerSyncChanges = func() {}
 
 	l.AddService(&structs.NodeService{ID: "redis"}, "")
 
@@ -1294,8 +1295,9 @@ func TestAgent_CheckTokens(t *testing.T) {
 
 	tokens := new(token.Store)
 	tokens.UpdateUserToken("default")
-	lcfg := agent.LocalConfig(config.DefaultRuntimeConfig(`bind_addr = "127.0.0.1" data_dir = "dummy"`))
-	l := local.NewState(lcfg, nil, tokens, make(chan struct{}, 1))
+	cfg := config.DefaultRuntimeConfig(`bind_addr = "127.0.0.1" data_dir = "dummy"`)
+	l := local.NewState(agent.LocalConfig(cfg), nil, tokens)
+	l.TriggerSyncChanges = func() {}
 
 	// Returns default when no token is set
 	l.AddCheck(&structs.HealthCheck{CheckID: types.CheckID("mem")}, "")
@@ -1318,8 +1320,9 @@ func TestAgent_CheckTokens(t *testing.T) {
 
 func TestAgent_CheckCriticalTime(t *testing.T) {
 	t.Parallel()
-	lcfg := agent.LocalConfig(config.DefaultRuntimeConfig(`bind_addr = "127.0.0.1" data_dir = "dummy"`))
-	l := local.NewState(lcfg, nil, new(token.Store), make(chan struct{}, 1))
+	cfg := config.DefaultRuntimeConfig(`bind_addr = "127.0.0.1" data_dir = "dummy"`)
+	l := local.NewState(agent.LocalConfig(cfg), nil, new(token.Store))
+	l.TriggerSyncChanges = func() {}
 
 	svc := &structs.NodeService{ID: "redis", Service: "redis", Port: 8000}
 	l.AddService(svc, "")
@@ -1381,8 +1384,9 @@ func TestAgent_CheckCriticalTime(t *testing.T) {
 
 func TestAgent_AddCheckFailure(t *testing.T) {
 	t.Parallel()
-	lcfg := agent.LocalConfig(config.DefaultRuntimeConfig(`bind_addr = "127.0.0.1" data_dir = "dummy"`))
-	l := local.NewState(lcfg, nil, new(token.Store), make(chan struct{}, 1))
+	cfg := config.DefaultRuntimeConfig(`bind_addr = "127.0.0.1" data_dir = "dummy"`)
+	l := local.NewState(agent.LocalConfig(cfg), nil, new(token.Store))
+	l.TriggerSyncChanges = func() {}
 
 	// Add a check for a service that does not exist and verify that it fails
 	checkID := types.CheckID("redis:1")
